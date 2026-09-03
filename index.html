@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>图片压缩到精确KB / Compress to exact KB / 画像を正確なKBに — exactkb: 批量·免费·无上传</title>
+<meta name="description" content="免费在线图片压缩:精确到目标KB(如≤30KB)、批量处理、EXIF旋转保留、像素上限。报名系统/小程序/签证上传的KB限制一次解决。不上传服务器,浏览器本地处理。Compress images to an exact KB limit, batch, in-browser, free. 画像を指定KBに正確に圧縮、アップロード不要・無料。">
+<meta name="keywords" content="图片压缩,压缩到30kb,压缩到指定大小,图片缩小,批量压缩,照片压缩,报名照片,tupian yasuo,image compress exact kb,compress to 50kb,resize image online,jpeg compressor,画像圧縮,写真圧縮">
+<meta name="author" content="w1977-0">
+<link rel="canonical" href="https://w1977-0.github.io/exactkb/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://w1977-0.github.io/exactkb/">
+<meta property="og:title" content="exactkb — 图片压缩到精确KB / Compress to exact KB / 画像を正確なKBに">
+<meta property="og:description" content="免费·隐私:批量压到目标KB,EXIF保留,无上传。Free & private: exact-KB batch compression, in your browser.">
+<meta property="og:site_name" content="exactkb">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "exactkb",
+  "url": "https://w1977-0.github.io/exactkb/",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (browser)",
+  "description": [
+    {"@language": "zh", "value": "免费图片压缩:批量精确到目标KB,EXIF旋转保留,照片不上传。"},
+    {"@language": "en", "value": "Free image compression to an exact KB limit, batch, EXIF-safe — private, in-browser."},
+    {"@language": "ja", "value": "画像を指定KBに正確に圧縮,アップロード不要・無料。"}
+  ],
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "featureList": "exact-KB bisection · batch · EXIF orientation · pixel cap · no upload · open source",
+  "isAccessibleForFree": true
+}
+</script>
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink: #141311; --paper: #fdfcf8; --fg: #141311; --bg: #f4f2ec;
+    --faint: rgba(20,19,17,.55); --hair: rgba(20,19,17,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #f2efe8; --paper: #1b1b1f; --fg: #ece9e2; --bg: #101010; --faint: rgba(242,239,232,.55); --hair: rgba(242,239,232,.16); }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font: 16px/1.5 ui-sans-serif, system-ui, "Helvetica Neue", "PingFang SC", sans-serif;
+    background: var(--bg); color: var(--fg);
+    min-height: 100dvh; display: grid; place-items: center;
+    padding: clamp(1rem, 4vh, 3rem) 1.25rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { width: min(46rem, 94vw); }
+  .masthead { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1.2rem; }
+  .brand { font-weight: 700; letter-spacing: .28em; text-transform: uppercase; font-size: .95rem; }
+  .mast-note { font-size: .78rem; color: var(--faint); text-align: right; }
+
+  .controls {
+    display: flex; gap: .9rem; flex-wrap: wrap; align-items: end;
+    border: 2px solid var(--fg); background: var(--paper); padding: .9rem 1rem;
+  }
+  .field { display: flex; flex-direction: column; gap: .3rem; }
+  .field label { font-size: .72rem; color: var(--faint); letter-spacing: .08em; }
+  .field input { font: inherit; color: var(--fg); background: transparent; border: 1.5px solid var(--fg); padding: .45rem .6rem; width: 7.5rem; font-variant-numeric: tabular-nums; }
+  .field .hintline { font-size: .7rem; color: var(--faint); }
+  .sp { flex: 1; }
+  button.go { font: 650 .95rem/1 inherit; color: var(--bg); background: var(--fg); border: 1.5px solid var(--fg); padding: .55rem 1.3rem; cursor: pointer; letter-spacing: .05em; }
+  button.go:disabled { opacity: .3; cursor: not-allowed; }
+
+  .drop {
+    margin-top: 1rem; border: 2px dashed var(--fg); background: var(--paper);
+    padding: 1.6rem 1.2rem; text-align: center; cursor: pointer; position: relative;
+  }
+  .drop.hover { outline: 3px solid var(--ink); outline-offset: -6px; }
+  .drop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .drop .main { font-weight: 650; }
+  .drop .sub { font-size: .8rem; color: var(--faint); margin-top: .3rem; }
+
+  .files { margin-top: 1.2rem; display: grid; gap: .8rem; }
+  .file {
+    border: 1.5px solid var(--hair); background: var(--paper); padding: .75rem .9rem;
+    display: grid; grid-template-columns: 4rem 1fr auto; gap: .9rem; align-items: center;
+  }
+  .file canvas { width: 4rem; height: 4rem; object-fit: cover; border: 1px solid var(--hair); background-image: repeating-conic-gradient(var(--hair) 0 25%, transparent 0 50%); background-size: 10px 10px; }
+  .file .name { font-size: .84rem; font-weight: 600; word-break: break-all; }
+  .file .stats { font-size: .78rem; color: var(--faint); font-variant-numeric: tabular-nums; margin-top: .15rem; }
+  .file .stats b { color: var(--fg); font-weight: 650; }
+  .file .state { font-size: .78rem; font-variant-numeric: tabular-nums; text-align: right; }
+  .file .state .warn { color: #a5541e; font-weight: 600; }
+  .file a.dl { display: inline-block; margin-top: .35rem; font: 650 .78rem/1 inherit; color: var(--bg); background: var(--fg); padding: .4rem .7rem; text-decoration: none; letter-spacing: .05em; }
+  .summary { margin-top: 1rem; font-size: .8rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+  footer { margin-top: 1.8rem; font-size: .72rem; color: var(--faint); display: flex; gap: 1.4rem; flex-wrap: wrap; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <div class="masthead">
+    <span class="brand">exactkb</span>
+    <span class="mast-note">图片不出浏览器 · 无上传 · 批量 — exact KB, in your browser · アップロード不要</span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label>目标大小上限 (KB)</label>
+      <input type="number" id="maxkb" value="30" min="1" step="1">
+      <span class="hintline">常见: 30 / 50 / 100 / 240</span>
+    </div>
+    <div class="field">
+      <label>最小 (KB, 可选)</label>
+      <input type="number" id="minkb" value="0" min="0" step="1">
+      <span class="hintline">双边要求填这里</span>
+    </div>
+    <div class="field">
+      <label>最长边像素 (0=不限)</label>
+      <input type="number" id="edge" value="0" min="0" step="10">
+      <span class="hintline">如 1280 / 600×600 需求填 600</span>
+    </div>
+    <span class="sp"></span>
+    <button class="go" id="go" disabled>压缩全部</button>
+  </div>
+
+  <div class="drop" id="drop">
+    <input type="file" id="file" accept="image/*" multiple>
+    <div class="main">点击选择,或把图片拖到这里(可多选)</div>
+    <div class="sub">JPEG / PNG / WebP — 全部在本机处理,不产生任何网络请求</div>
+  </div>
+
+  <div class="files" id="files"></div>
+  <p class="summary" id="summary" hidden></p>
+
+  <footer>
+    <span>EXIF 旋转自动保留 · JPEG 质量二分到最大可用</span>
+    <a href="https://github.com/w1977-0/exactkb" rel="noopener">exactkb</a>
+    <a href="https://github.com/w1977-0/exactkb#how-it-works" rel="noopener">how it works</a>
+  </footer>
+</main>
+<script>
+// kbmath.js — exactkb core math. Zero dependencies, browser + Node.
+//
+// The job: registration systems and chat-app uploads demand BOTH pixel caps
+// and file-size caps ("300KB max", "between 10KB and 30KB"). The tool walks
+// a deterministic ladder:
+//
+//   1. normalize  — decode, apply EXIF orientation, cap longest edge to the
+//                   pixel limit (if any) by high-quality downsampling
+//   2. bisect     — binary-search the JPEG quality parameter (9 rounds ≈
+//                   0.002 quality precision) for the LARGEST file that still
+//                   fits under the KB cap, using the real encoder
+//   3. verify     — honest terminal states: ok / under-min / unreachable
+//                   (never pad bytes into a JPEG; never lie)
+
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.kbmath = factory();
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+
+  // ---- pixel normalization ---------------------------------------------
+  // Fit an image of (w,h) into a longest-edge cap. Returns the target dims
+  // (unchanged when already within the cap). Pure math.
+  function fitLongestEdge(w, h, cap) {
+    if (!cap || cap <= 0) return { w: w, h: h };
+    var longest = Math.max(w, h);
+    if (longest <= cap) return { w: w, h: h };
+    var s = cap / longest;
+    // even dims avoid odd-pixel chroma shifts in 4:2:0 encoders
+    return { w: Math.max(1, 2 * Math.round(w * s / 2)), h: Math.max(1, 2 * Math.round(h * s / 2)) };
+  }
+
+  // EXIF orientation normalizer: given the EXIF orientation code (1..8)
+  // and the decoded bitmap dims, return the dims the canvas must have after
+  // applying the rotation. (The caller rotates via canvas transform.)
+  // Codes: 1 normal · 2 mirror · 3 rotate180 · 4 mirror180 · 5 mirror+90 ·
+  //        6 rotate90 · 7 mirror-90 · 8 rotate-90
+  function dimsAfterOrientation(w, h, orientation) {
+    if (orientation >= 5 && orientation <= 8) return { w: h, h: w };
+    return { w: w, h: h };
+  }
+
+  // Parse the EXIF orientation from a JPEG ArrayBuffer (0 when absent/other
+  // formats). Pure bytes: scan APP1/Exif for the orientation tag (0x0112).
+  function exifOrientation(arrayBuffer) {
+    var u = new DataView(arrayBuffer);
+    if (u.byteLength < 4 || u.getUint16(0) !== 0xFFD8) return 0; // not JPEG
+    var off = 2;
+    while (off + 4 <= u.byteLength) {
+      var marker = u.getUint16(off);
+      if ((marker & 0xFF00) !== 0xFF00) return 0;
+      var size = u.getUint16(off + 2);
+      if (marker === 0xFFE1) {
+        // APP1: check "Exif\0\0"
+        if (off + 10 <= u.byteLength &&
+            u.getUint32(off + 4) === 0x45786966 && u.getUint16(off + 8) === 0x0000) {
+          var tiff = off + 10;
+          var le = u.getUint16(tiff) === 0x4949; // "II" little endian
+          var read16 = function (p) { return u.getUint16(p, le); };
+          var read32 = function (p) { return u.getUint32(p, le); };
+          var ifd0 = tiff + read32(tiff + 4);
+          var count = read16(ifd0);
+          for (var i = 0; i < count; i++) {
+            var e = ifd0 + 2 + i * 12;
+            if (read16(e) === 0x0112) return read16(e + 8);
+          }
+          return 1;
+        }
+      }
+      off += 2 + size;
+    }
+    return 0;
+  }
+
+  // ---- exact-KB bisection (encoder-driven, from idphoto-kit's proven core) --
+  // bytesAt(quality) → byte size of the real encoded JPEG at that quality.
+  // Returns {ok, quality, bytes, reason?} — reason ∈ {unreachable, under-min}.
+  function bisectExactKB(maxKB, minKB, bytesAt) {
+    var maxBytes = maxKB > 0 ? maxKB * 1024 : Infinity;
+    var minBytes = minKB > 0 ? minKB * 1024 : 0;
+    var lo = 0.05, hi = 1.0, best = null;
+    for (var i = 0; i < 9; i++) {
+      var mid = (lo + hi) / 2;
+      var bytes = bytesAt(mid);
+      if (bytes <= maxBytes) { best = { quality: mid, bytes: bytes }; lo = mid; }
+      else hi = mid;
+    }
+    if (best === null) {
+      var floorBytes = bytesAt(lo);
+      if (floorBytes <= maxBytes) best = { quality: lo, bytes: floorBytes };
+      else return { ok: false, reason: "unreachable", quality: lo, bytes: floorBytes };
+    }
+    if (best.bytes < minBytes) {
+      return { ok: false, reason: "under-min", quality: best.quality, bytes: best.bytes };
+    }
+    return { ok: true, quality: best.quality, bytes: best.bytes };
+  }
+
+  // ---- human formatting -------------------------------------------------
+  function fmtKB(bytes) {
+    if (bytes >= 1024 * 1024) return (bytes / 1048576).toFixed(2) + " MB";
+    if (bytes >= 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return bytes + " B";
+  }
+
+  // Downscale ladder recommendation: when a cap is unreachable even at the
+  // lowest quality, suggest the longest-edge cap that usually makes it fit
+  // (JPEG area scales roughly with pixel count).
+  function suggestEdgeForCap(curW, curH, targetKB, actualBytesAtFull) {
+    if (actualBytesAtFull <= 0 || targetKB <= 0) return null;
+    var ratio = targetKB * 1024 / actualBytesAtFull; // ≤1
+    if (ratio >= 1) return null;
+    var s = Math.sqrt(ratio) * 0.92; // safety margin for encoder variance
+    var longest = Math.max(curW, curH) * s;
+    return Math.max(320, 2 * Math.round(longest / 2));
+  }
+
+  return {
+    fitLongestEdge: fitLongestEdge,
+    dimsAfterOrientation: dimsAfterOrientation,
+    exifOrientation: exifOrientation,
+    bisectExactKB: bisectExactKB,
+    fmtKB: fmtKB,
+    suggestEdgeForCap: suggestEdgeForCap
+  };
+});
+
+
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var drop = $("drop"), fileInput = $("file"), filesBox = $("files"), summary = $("summary");
+  var items = []; // {name, bitmap, file, outBlob, outURL, state}
+
+  drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("hover"); });
+  drop.addEventListener("dragleave", function () { drop.classList.remove("hover"); });
+  drop.addEventListener("drop", function (e) {
+    e.preventDefault(); drop.classList.remove("hover");
+    takeFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener("change", function () { takeFiles(this.files); });
+
+  function takeFiles(list) {
+    var added = 0;
+    var pending = list.length;
+    Array.prototype.forEach.call(list, function (f) {
+      var url = URL.createObjectURL(f);
+      var img = new Image();
+      img.onload = function () {
+        createImageBitmap(img).then(function (bm) {
+          items.push({ name: f.name, bitmap: bm, origBytes: f.size, state: "待压缩" });
+          URL.revokeObjectURL(url);
+          added++;
+          if (added === pending) render();
+        });
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); pending--; };
+      img.src = url;
+    });
+  }
+
+  function render() {
+    filesBox.innerHTML = "";
+    items.forEach(function (it, idx) {
+      var row = document.createElement("div");
+      row.className = "file";
+      var th = document.createElement("canvas");
+      th.width = 96; th.height = 96;
+      var tc = th.getContext("2d");
+      var s = Math.min(96 / it.bitmap.width, 96 / it.bitmap.height);
+      var dw = it.bitmap.width * s, dh = it.bitmap.height * s;
+      tc.imageSmoothingQuality = "high";
+      tc.drawImage(it.bitmap, (96 - dw) / 2, (96 - dh) / 2, dw, dh);
+      var mid = document.createElement("div");
+      mid.innerHTML = '<div class="name"></div><div class="stats"></div>';
+      mid.querySelector(".name").textContent = it.name;
+      var stats = mid.querySelector(".stats");
+      if (it.outBytes) {
+        stats.innerHTML = "原 <b>" + kbmath.fmtKB(it.origBytes) + "</b> " +
+          it.bitmap.width + "×" + it.bitmap.height +
+          " → <b>" + kbmath.fmtKB(it.outBytes) + "</b> " +
+          it.outW + "×" + it.outH +
+          (it.quality ? " · 质量 " + it.quality.toFixed(3) : "");
+      } else {
+        stats.innerHTML = "原 <b>" + kbmath.fmtKB(it.origBytes) + "</b> · " + it.bitmap.width + "×" + it.bitmap.height + " · " + it.state;
+      }
+      var right = document.createElement("div");
+      right.className = "state";
+      if (it.warn) {
+        right.innerHTML = '<span class="warn">' + it.warn + '</span>';
+      }
+      if (it.outBlob) {
+        var a = document.createElement("a");
+        a.className = "dl";
+        a.textContent = "下载 ↓";
+        a.href = it.outURL;
+        a.download = it.name.replace(/\.[^.]+$/, "") + "-" + it.outW + "px-" + Math.round(it.outBytes / 1024) + "kb.jpg";
+        right.appendChild(document.createElement("br"));
+        right.appendChild(a);
+      }
+      row.appendChild(th); row.appendChild(mid); row.appendChild(right);
+      filesBox.appendChild(row);
+    });
+    $("go").disabled = items.length === 0;
+    if (items.length) summary.hidden = false;
+    var done = items.filter(function (i) { return i.outBlob; });
+    if (done.length) {
+      var saved = items.reduce(function (a, i) { return a + (i.outBlob ? i.origBytes - i.outBytes : 0); }, 0);
+      summary.textContent = done.length + " / " + items.length + " 已压缩 · 共省 " + kbmath.fmtKB(Math.max(0, saved));
+    } else {
+      summary.textContent = items.length + " 张待压缩";
+    }
+  }
+
+  // ---- the pipeline ------------------------------------------------------
+  $("go").addEventListener("click", function () {
+    var maxKB = parseInt($("maxkb").value, 10) || 0;
+    var minKB = parseInt($("minkb").value, 10) || 0;
+    var edge = parseInt($("edge").value, 10) || 0;
+    if (maxKB <= 0) { maxKB = 0; }
+    (function next(i) {
+      if (i >= items.length) { render(); return; }
+      compressOne(items[i], maxKB, minKB, edge, function () { next(i + 1); });
+    })(0);
+  });
+
+  function compressOne(it, maxKB, minKB, edge, done) {
+    var bm = it.bitmap;
+    // 1. pixel cap
+    var fit = kbmath.fitLongestEdge(bm.width, bm.height, edge);
+    var W = fit.w, H = fit.h;
+    var c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var ctx = c.getContext("2d");
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(bm, 0, 0, W, H);
+    it.outW = W; it.outH = H;
+
+    var encode = function (q) {
+      return new Promise(function (res) {
+        c.toBlob(function (b) { res(b ? b.size : 1); }, "image/jpeg", q);
+      });
+    };
+
+    if (maxKB <= 0) {
+      // no size cap: single high-quality pass
+      c.toBlob(function (b) { finish(it, b, 0.92); done(); }, "image/jpeg", 0.92);
+      return;
+    }
+    // 2. bisection against the real encoder (async rounds)
+    var lo = 0.05, hi = 1.0, best = null;
+    (function round(n) {
+      if (n <= 0) {
+        if (best) {
+          c.toBlob(function (b) {
+            if (minKB > 0 && best.bytes < minKB * 1024) {
+              it.warn = "已到最大可用质量仍只有 " + kbmath.fmtKB(best.bytes) + " · 低于 " + minKB + "KB 下限";
+            }
+            finish(it, b, best.quality);
+            done();
+          }, "image/jpeg", best.quality);
+        } else {
+          encode(lo).then(function (s) {
+            it.warn = "压不进 " + maxKB + "KB(最小约 " + kbmath.fmtKB(s) + ")·建议先设最长边 ≤" +
+              kbmath.suggestEdgeForCap(W, H, maxKB, s) + "px 再压缩";
+            c.toBlob(function (b) { finish(it, b, lo); done(); }, "image/jpeg", lo);
+          });
+        }
+        return;
+      }
+      encode((lo + hi) / 2).then(function (bytes) {
+        var mid = (lo + hi) / 2;
+        if (bytes <= maxKB * 1024) { best = { quality: mid, bytes: bytes }; lo = mid; }
+        else hi = mid;
+        round(n - 1);
+      });
+    })(9);
+  }
+
+  function finish(it, blob, quality) {
+    it.outBlob = blob;
+    it.outBytes = blob.size;
+    it.quality = quality;
+    it.state = "完成";
+    if (it.outURL) URL.revokeObjectURL(it.outURL);
+    it.outURL = URL.createObjectURL(blob);
+  }
+})();
+</script>
+</body>
+</html>
