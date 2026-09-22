@@ -8,6 +8,9 @@
 >
 > **日本語** — 画像を指定KBに正確に圧縮する無料ツール。アップロード不要・ウォーターマークなし、ブラウザ内だけで動作。**[使ってみる](https://w1977-0.github.io/exactkb/)**
 
+
+[![CI](https://github.com/w1977-0/exactkb/actions/workflows/ci.yml/badge.svg)](https://github.com/w1977-0/exactkb/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) ![No upload](https://img.shields.io/badge/privacy-no%20upload-green.svg)
+
 ## Why
 
 Upload forms don't want "quality 80%". They want **bytes**: "≤30KB", "between 10 and 300KB". Every "compress image" site guesses a quality and hopes — this one binary-searches the JPEG quality parameter (9 rounds ≈ 0.002 precision) against the **real encoder** and takes the largest result under the cap:
