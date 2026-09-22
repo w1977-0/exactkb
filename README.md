@@ -39,6 +39,16 @@ decode → EXIF orientation applied → longest-edge fit (high-quality resample)
 node --test test/kbmath.test.js
 ```
 
+## Browser support
+
+Any current Chrome, Edge, Firefox or Safari — desktop or mobile. Encoding goes through the browser's own canvas and JPEG encoder, so results can differ by a few hundred bytes between browsers; that is why the search measures the real encoder instead of predicting a size. Large batches are processed one file at a time, so very old or memory-limited devices may simply be slow.
+
+## What it does not do
+
+- **No byte padding.** If the cap is unreachable at the lowest usable quality, you get that as an answer with a suggested pixel cap — the tool never appends junk bytes to make a number look right.
+- **No re-encoding to a different format.** Output is JPEG. PNG sources are read, not output as PNG.
+- **No EXIF rewriting.** Orientation is read and applied so photos are not sideways; nothing else from the metadata block is carried into the output.
+
 ## License
 
 MIT
