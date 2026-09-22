@@ -40,8 +40,11 @@
     return { w: w, h: h };
   }
 
-  // Parse the EXIF orientation from a JPEG ArrayBuffer (0 when absent/other
-  // formats). Pure bytes: scan APP1/Exif for the orientation tag (0x0112).
+  // Parse the EXIF orientation from a JPEG ArrayBuffer. Pure bytes: scan
+  // APP1/Exif for the orientation tag (0x0112).
+  // Returns 0 when the bytes are not a JPEG, or when no APP1/Exif block is
+  // found at all. A JPEG whose Exif block simply lacks the tag returns 1 —
+  // the "no rotation" code — so the caller can rotate unconditionally.
   function exifOrientation(arrayBuffer) {
     var u = new DataView(arrayBuffer);
     if (u.byteLength < 4 || u.getUint16(0) !== 0xFFD8) return 0; // not JPEG
